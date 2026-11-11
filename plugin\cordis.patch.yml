@@ -1,0 +1,4 @@
+# model-speedtest bundle patch：把插件插入当前 profile 的层栈。
+- insert:
+    - id: model-speedtest
+      name: '@local/model-speedtest'
