@@ -1,6 +1,0 @@
-{
-  "meta": {
-    "title": "Model speedtest batches",
-    "description": "Run N rounds serially in one environment, report the median, and manage archived batches."
-  }
-}

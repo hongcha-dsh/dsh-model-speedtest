@@ -11,29 +11,41 @@ DSH 插件：在同一个环境里**串行跑 N 轮 `model-speed-load` 测速**�
 ## 仓库结构
 
 ```text
-README.md       # 本说明
-plugin/         # 可安装的 DSH 插件 bundle（package.json / index.js / client.js / lib / locale / icon.svg / test）
+README.md            # 本说明
+package.json         # 插件 bundle 清单（dsh.bundle + dsh.client）
+index.js             # Host 半侧入口（路由/命令/装配）
+client.js            # 浏览器半侧：插件详情页里的「模型测速」区块
+lib/                 # Host 纯逻辑（批次状态机、runner、路由、汇总、存档）
+locale/              # 插件列表里的标题/描述（中英）
+skill/               # 随插件分发的测速 skill 副本（测量内核）
+icon.svg             # 插件图标源文件
+assets/icon-180.png  # 市场卡片图标（位图）
+test/                # node --test 覆盖
 ```
 
 ## 安装
 
-`plugin/` 就是一个完整的插件 bundle（`package.json` + `cordis.patch.yml` + `client.js` + `index.js` + `locale/` + `icon.svg`），不需要构建、不需要 `pnpm install`。
+仓库根目录就是一个完整的 DSH 插件 bundle（`package.json` + `cordis.patch.yml` + `index.js` + `client.js` + `lib/` + `locale/` + `icon.svg`），**不需要构建，也不需要 `pnpm install`**。
 
-先把仓库克隆到本地，然后在 DSH 会话里让助手执行：
+**插件市场（推荐）**：DSH 里打开「插件」页 →「插件市场」，搜索「模型测速」点安装。
 
-```text
-plugin_manager install_bundle  target = <本仓库路径>\plugin
-```
-
-等价的 CLI 形式（若你的 profile 走命令行）：
+**命令行**：
 
 ```bash
-dsh plugin --profile <profile> add <本目录绝对路径>
+dsh plugin --profile <profile> add github:hongcha-dsh/dsh-model-speedtest
+```
+
+也可以克隆到本地后装本地目录：
+
+```bash
+dsh plugin --profile <profile> add <本仓库绝对路径>
 ```
 
 装完按提示**重启 DSH / 刷新页面**，再到「插件」页确认 `模型测速批次` 一行已启用。卸载用 `plugin_manager remove_bundle`。
 
-依赖：测量内核 `D:\DSH-Home\skills\model-speed-load`（即 `$DSH_HOME/skills/model-speed-load`）。它缺失时批次会以 `SKILL-MISSING` 拒绝启动，不会静默降级。
+### 测速 skill（自带，缺失时自动安装）
+
+测量内核是 `model-speed-load` skill，正常位置是 `$DSH_HOME/skills/model-speed-load`。插件自带一份副本（仓库里的 `skill/model-speed-load/`）：插件加载时如果发现目标机器上没有这个 skill，会自动复制过去；**已经存在则不覆盖**，尊重你本地自己维护的版本。它会以 `SKILL-MISSING` 拒绝启动而不是静默降级——所以装完插件后先看一眼插件页有没有「skill 不可用」的提示。
 
 ## 入口
 
@@ -90,7 +102,7 @@ $DSH_HOME/speedtest/index.json     # 最近 200 个批次：batchId/dir/createdA
 
 ## 文件
 
-以下路径相对 `plugin/`：
+以下路径相对仓库根：
 
 | 文件 | 作用 |
 | --- | --- |
@@ -102,7 +114,8 @@ $DSH_HOME/speedtest/index.json     # 最近 200 个批次：batchId/dir/createdA
 | `test/**` | `node --test` 覆盖（Host 纯逻辑 + Client 冒烟，共 83 条） |
 | `client.js` | 浏览器半侧：插件详情页区块（React，手写 `__ModuleLoader__` 工厂；列表/详情/重命名/删除 + 新对话预填启动） |
 | `locale/zh.json`、`locale/en.json` | 插件列表里的 `meta.title` / `meta.description` |
-| `icon.svg` | 插件图标（原创秒表图形） |
+| `skill/model-speed-load/` | 随插件分发的测速 skill 副本（缺失时自动装到 `$DSH_HOME/skills/model-speed-load`） |
+| `icon.svg`、`assets/icon-180.png` | 插件图标源文件 / 市场卡片位图 |
 | `CONTRACT.md` | Host / Client 两侧实现的唯一接口依据 |
 
 ## 与 skill 的关系
@@ -112,7 +125,6 @@ $DSH_HOME/speedtest/index.json     # 最近 200 个批次：batchId/dir/createdA
 ## 开发与测试
 
 ```bash
-cd plugin
 node --test-isolation=none --test 'test/*.test.js'
 ```
 
@@ -120,4 +132,4 @@ node --test-isolation=none --test 'test/*.test.js'
 
 ## 许可
 
-仓库暂未声明开源许可证；如需二次分发请先联系作者。
+MIT（见 [LICENSE](LICENSE)）。
