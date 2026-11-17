@@ -1,7 +1,7 @@
 {
   "name": "dsh-model-speedtest",
   "version": "0.2.0",
-  "private": true,
+  "private": false,
   "description": "模型测速批次：在插件详情页启动 N 轮同环境测速（新开对话预填提示词），汇总中位数并管理测速存档。",
   "type": "module",
   "icon": "./icon.svg",
