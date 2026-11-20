@@ -96,18 +96,20 @@ test('deriveSummary 统计各状态与耗时/速度', () => {
   const batch = makeBatch(3)
   settleRound(batch, 1, { status: ROUND_STATUS.PASSED, elapsedSeconds: 92, speedTps: 10, resultPath: 'a' }, 't')
   settleRound(batch, 2, { status: ROUND_STATUS.PASSED, elapsedSeconds: 100, speedTps: 14, resultPath: 'b' }, 't')
-  settleRound(batch, 3, { status: ROUND_STATUS.TIMEOUT, error: '超时' }, 't')
+  settleRound(batch, 3, { status: ROUND_STATUS.TIMEOUT, elapsedSeconds: 185, speedTps: 3.2, error: '超时' }, 't')
   const summary = deriveSummary(batch.rounds)
   assert.deepEqual(
     { total: summary.total, passed: summary.passed, failed: summary.failed, timeout: summary.timeout, aborted: summary.aborted, noReport: summary.noReport },
     { total: 3, passed: 2, failed: 0, timeout: 1, aborted: 0, noReport: 0 },
   )
+  // 超时/失败轮次即使带有原始数值，也不得污染通过轮次的统计中位数。
   assert.equal(summary.stats.elapsedSeconds.n, 2)
   assert.equal(summary.stats.elapsedSeconds.median, 96)
   assert.equal(summary.stats.elapsedSeconds.min, 92)
   assert.equal(summary.stats.elapsedSeconds.max, 100)
   assert.equal(summary.stats.elapsedSeconds.range, 8)
   assert.equal(summary.stats.elapsedSeconds.mad, 4)
+  assert.equal(summary.stats.speedTps.n, 2)
   assert.equal(summary.stats.speedTps.median, 12)
 })
 
@@ -175,4 +177,8 @@ test('toIndexEntry 只带 CONTRACT §4.3 字段', () => {
   })
   assert.equal('workspaceRoot' in entry, false)
   assert.equal('skill' in entry, false)
+
+  batch.summary.environmentMismatch = true
+  const mismatched = toIndexEntry(batch)
+  assert.deepEqual(mismatched.medians, { elapsedSeconds: null, speedTps: null })
 })

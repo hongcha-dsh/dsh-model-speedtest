@@ -97,6 +97,10 @@ $DSH_HOME/speedtest/index.json     # 最近 200 个批次：batchId/dir/createdA
 - **权限预设**：`custom` / `auto` 下测速轮次可能需要人工审批，面板会给警告但仍允许开始——这时候批次大概率会卡在审批上。
 - **逐轮表列**：轮 / 结果 / 缓存（首请求命中状态 + 读到的缓存 token）/ 任务（runId）/ 耗时 / 有效速度 / token / 工具次数 / 错误；
   字段来自单轮 `result.json`，缺失时显示「—」或「未知」，不猜 0。
+- **汇总只算通过轮次**：统计表与存档中位数只纳入 `passed` 轮，失败 / 超时 / 中断不计入 n、中位数与 MAD；
+  `environmentMismatch` 时存档中位数留空，不拿不一致环境的数据凑数。
+- **会话日志归属校验**：`result.json` 里的会话日志路径若不属于本轮创建的 sessionId（同工作区有并发对话时，
+  按 mtime 可能误选到别的会话），该轮会附一条归属异常告警，而不是把别人的日志当本轮数据。
 - **平台**：`dsh.client.platform = web`，只有 Web GUI 有这块 UI；桌面端没有独立面板。
 - 只读辅助接口：`POST /api/speedtest/unlock`（`{"workspaceRoot":"...","confirm":true}`）用于手工释放残留锁，面板只在 `BUSY` 且确认无活跃批次时调用它。
 

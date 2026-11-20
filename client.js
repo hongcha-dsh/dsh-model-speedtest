@@ -84,53 +84,73 @@ window.__ModuleLoader__.load({
         'form.workspace': '工作区',
         'form.workspacePick': '请选择工作区',
         'form.workspaceLoading': '正在读取工作区…',
-        'form.roundsHint': '{min}–{max} 轮，默认 {defaults} 轮',
+        'form.roundsHint': '{min}–{max} 轮',
+        'form.roundsDec': '减少轮数',
+        'form.roundsInc': '增加轮数',
         'form.start': '开始 {count} 轮',
         'form.starting': '正在打开…',
-        'form.meta': '每轮一个全新会话 + 全新目录，单轮上限 {minutes} 分钟',
-        'form.note': '点击后会跳到新对话，提示词是 /speedtest {count}；选好配置再发送。',
+        'form.meta': '每轮独立会话 · 单轮上限 {minutes} 分钟',
+        'form.note': '点击后将新建对话并预填 /speedtest {count}，在对话里选好模型与预设后发送即可。',
         'notice.started': '已新建测速对话并填入提示词，选好要测的配置后发送即可。',
         'notice.renamed': '已重命名为「{name}」',
         'notice.deleted': '已删除存档 {batchId}',
         'notice.removed': '目录本来就不存在，已从列表移除条目。',
-        'notice.cancelled': '已请求取消当前轮，批次将标记为 aborted。',
-        'progress.title': '当前批次',
-        'progress.round': '第 {current}/{total} 轮',
+        'notice.cancelled': '已请求取消当前轮，批次将标记为已取消。',
+        'progress.title': '正在测速',
+        'progress.round': '第 {current} / {total} 轮',
         'progress.cancel': '取消批次',
         'progress.cancelling': '正在取消…',
-        'progress.cancelHint': '只取消当前轮并结束批次，已有轮次结果会保留。',
-        'list.title': '存档',
-        'list.empty': '还没有存档。配好环境后点“开始 N 轮”。',
+        'progress.cancelHint': '仅取消当前轮并结束批次，已完成轮次的数据会保留。',
+        'list.title': '测速存档',
+        'list.count': '{count} 条',
+        'list.empty': '还没有测速存档。选好工作区和轮数后，点击上方「开始 N 轮」即可发起。',
         'list.loading': '正在读取存档…',
-        'list.rounds': '{rounds} 轮 · 通过 {passed}',
+        'list.rounds': '{passed}/{rounds}',
         'list.median': '中位 {seconds}s · {speed} tok/s',
-        'list.col.name': '名称',
+        'list.col.name': '存档 / 模型',
         'list.col.status': '状态',
-        'list.col.rounds': '轮数/通过',
+        'list.col.rounds': '通过',
         'list.col.elapsed': '中位耗时',
         'list.col.speed': '中位速度',
         'list.col.created': '创建时间',
-        'list.col.model': '模型',
-        'list.buildHint': '插件客户端版本；页面没变时先重载插件再强刷（Ctrl+Shift+R）。',
-        'result.cache': '缓存',
+        'env.provider': '提供商',
+        'env.model': '模型',
+        'env.reasoning': '推理强度',
+        'env.agentPreset': 'Agent 预设',
+        'env.permissionPreset': '权限预设',
+        'result.cache': '首请求缓存',
         'result.task': '任务',
         'result.cacheHit': '命中',
         'result.cacheMiss': '未命中',
         'result.cacheUnknown': '未知',
-        'result.stats.title': '统计',
+        'result.stats.title': '统计汇总',
+        'result.stats.scope': '仅统计通过轮次（n={n}）',
         'result.metric.elapsed': '完成耗时（秒）',
-        'result.metric.speed': '有效速度（tok/s）',
+        'result.metric.speed': '有效输出速度（tok/s）',
         'result.metric.request': '模型请求耗时（秒）',
-        'result.metric.toolTime': '工具耗时（秒）',
-        'result.metric.stream': '流式吐字速度（tok/s）',
-        'result.metric.tokens': '输出 token',
-        'result.metric.tools': '工具次数',
-                'result.stat.metric': '指标',
-'result.stat.n': 'n',
+        'result.metric.toolTime': '工具执行耗时（秒）',
+        'result.metric.stream': '流式吐字速度（tok/s，对照）',
+        'result.metric.tokens': '输出 Token',
+        'result.metric.tools': '工具调用次数',
+        'result.stat.metric': '指标',
+        'result.stat.n': 'n',
         'result.stat.median': '中位数',
         'result.stat.min': '最小',
         'result.stat.max': '最大',
         'result.stat.mad': 'MAD',
+        'kpi.passed': '通过轮次',
+        'kpi.passedAll': '共 {total} 轮 · 全部通过',
+        'kpi.passedSome': '共 {total} 轮 · 未通过 {failed} 轮',
+        'kpi.elapsed': '完成耗时（中位）',
+        'kpi.speed': '有效输出速度（中位）',
+        'kpi.speedSub': '整请求墙钟口径',
+        'kpi.stream': '流式吐字（对照）',
+        'kpi.streamSub': '不含预填与思考 · 仅供参考',
+        'kpi.request': '模型请求耗时（中位）',
+        'kpi.requestSub': '含预填、排队与思考',
+        'kpi.madRange': 'MAD ±{mad} · {min}–{max}',
+        'kpi.needMore': '有效样本不足 2 轮',
+        'kpi.mismatch': '环境不一致，未合并',
         'detail.back': '返回列表',
         'detail.name': '名称',
         'detail.rename': '重命名',
@@ -146,30 +166,31 @@ window.__ModuleLoader__.load({
         'detail.createdAt': '创建时间',
         'detail.id': '批次 ID',
         'detail.env': '批次环境',
-        'detail.skill': '测速 skill',
+        'detail.skill': '测速任务',
         'detail.batchDir': '批次目录',
+        'detail.notes': '运行记录与提醒',
+        'detail.warnings': '异常与风险提醒',
         'detail.copy': '复制',
         'detail.copied': '已复制',
-        'result.title': '逐轮结果',
+        'result.title': '逐轮明细',
         'result.round': '轮',
         'result.outcome': '结果',
-        'result.elapsed': '耗时',
+        'result.elapsed': '完成耗时',
         'result.speed': '有效速度',
-        'result.stream': '吐字速度',
+        'result.stream': '流式吐字',
         'result.streamHint': '流式输出阶段的纯吐字速度（Σtoken ÷ Σ流式跨度），不含预填与思考等待；服务端批量下发时可能偏高，仅作对照。',
-        'result.tokens': 'Token',
+        'result.tokens': '输出 Token',
         'result.tools': '工具次数',
-        'result.error': '错误',
-        'result.sample': '样本 n={n}',
+        'result.error': '错误原因',
+        'result.sample': '有效样本 n={n}',
         'result.passed': '通过 {passed}/{total}',
         'result.median': '中位数',
         'result.mad': 'MAD',
-        'result.failed': '未通过轮次',
         'result.empty': '本批次还没有可用的轮次结果。',
         'result.pending': '等待第一轮结果…',
-        'result.mismatch': '环境不一致，未合并中位数。',
-        'result.insufficient': '样本不足（n<2），不计算中位数/MAD。',
-        'result.statsHint': '中位数与 MAD 只在样本 n≥2 且各轮环境一致时有意义。',
+        'result.mismatch': '各轮环境不一致（模型 / 预设 / 工具清单存在差异），已拒绝合并中位数。',
+        'result.insufficient': '通过且可计量的样本不足 2 轮，中位数与 MAD 暂不计算。',
+        'result.noPassed': '本批次没有通过的轮次，暂无可汇总的成功速度数据。',
         'status.queued': '排队中',
         'status.running': '运行中',
         'status.done': '已完成',
@@ -204,53 +225,73 @@ window.__ModuleLoader__.load({
         'form.workspace': 'Workspace',
         'form.workspacePick': 'Select a workspace',
         'form.workspaceLoading': 'Loading workspaces…',
-        'form.roundsHint': '{min}–{max} rounds, default {defaults}',
+        'form.roundsHint': '{min}–{max}',
+        'form.roundsDec': 'Decrease rounds',
+        'form.roundsInc': 'Increase rounds',
         'form.start': 'Start {count} rounds',
         'form.starting': 'Opening…',
-        'form.meta': 'Each round gets a fresh session and a fresh directory; {minutes} min per round at most',
-        'form.note': 'This jumps to a new conversation with /speedtest {count} prefilled; choose the configuration, then send.',
+        'form.meta': 'Fresh session per round · {minutes} min cap',
+        'form.note': 'Opens a new conversation with /speedtest {count} prefilled; pick the model & preset, then send.',
         'notice.started': 'New speedtest conversation opened with the prompt filled in. Choose the configuration, then send.',
         'notice.renamed': 'Renamed to "{name}"',
         'notice.deleted': 'Deleted archive {batchId}',
         'notice.removed': 'The directory was already gone; removed the list entry.',
         'notice.cancelled': 'Cancellation requested; the batch will be marked aborted.',
-        'progress.title': 'Current batch',
-        'progress.round': 'Round {current}/{total}',
+        'progress.title': 'Running batch',
+        'progress.round': 'Round {current} / {total}',
         'progress.cancel': 'Cancel batch',
         'progress.cancelling': 'Cancelling…',
         'progress.cancelHint': 'Cancels the current round and ends the batch; finished rounds are kept.',
         'list.title': 'Archives',
-        'list.empty': 'No archives yet. Configure the environment, then start N rounds.',
+        'list.count': '{count}',
+        'list.empty': 'No archives yet. Select a workspace and rounds above, then start a batch.',
         'list.loading': 'Loading archives…',
-        'list.rounds': '{rounds} rounds · {passed} passed',
+        'list.rounds': '{passed}/{rounds}',
         'list.median': 'median {seconds}s · {speed} tok/s',
-        'list.col.name': 'Name',
+        'list.col.name': 'Archive / Model',
         'list.col.status': 'Status',
-        'list.col.rounds': 'Rounds/passed',
+        'list.col.rounds': 'Passed',
         'list.col.elapsed': 'Median time',
         'list.col.speed': 'Median speed',
         'list.col.created': 'Created',
-        'list.col.model': 'Model',
-        'list.buildHint': 'Client build of this plugin; if the page looks stale, reload the plugin and hard-refresh (Ctrl+Shift+R).',
-        'result.cache': 'Cache',
-        'result.task': 'Run',
-        'result.cacheHit': 'hit',
-        'result.cacheMiss': 'miss',
-        'result.cacheUnknown': 'unknown',
+        'env.provider': 'Provider',
+        'env.model': 'Model',
+        'env.reasoning': 'Reasoning',
+        'env.agentPreset': 'Agent preset',
+        'env.permissionPreset': 'Permission',
+        'result.cache': 'First cache',
+        'result.task': 'Task',
+        'result.cacheHit': 'Hit',
+        'result.cacheMiss': 'Miss',
+        'result.cacheUnknown': 'Unknown',
         'result.stats.title': 'Statistics',
+        'result.stats.scope': 'Passed rounds only (n={n})',
         'result.metric.elapsed': 'Elapsed (s)',
         'result.metric.speed': 'Effective speed (tok/s)',
         'result.metric.request': 'Model request time (s)',
         'result.metric.toolTime': 'Tool time (s)',
-        'result.metric.stream': 'Streaming speed (tok/s)',
+        'result.metric.stream': 'Streaming speed (tok/s, ref)',
         'result.metric.tokens': 'Output tokens',
         'result.metric.tools': 'Tool calls',
-                'result.stat.metric': 'Metric',
-'result.stat.n': 'n',
+        'result.stat.metric': 'Metric',
+        'result.stat.n': 'n',
         'result.stat.median': 'Median',
         'result.stat.min': 'Min',
         'result.stat.max': 'Max',
         'result.stat.mad': 'MAD',
+        'kpi.passed': 'Passed rounds',
+        'kpi.passedAll': '{total} rounds · all passed',
+        'kpi.passedSome': '{total} rounds · {failed} not passed',
+        'kpi.elapsed': 'Elapsed (median)',
+        'kpi.speed': 'Effective speed (median)',
+        'kpi.speedSub': 'Request wall-clock metric',
+        'kpi.stream': 'Streaming (reference)',
+        'kpi.streamSub': 'Excludes prefill & thinking',
+        'kpi.request': 'Model request (median)',
+        'kpi.requestSub': 'Includes prefill, queue & thinking',
+        'kpi.madRange': 'MAD ±{mad} · {min}–{max}',
+        'kpi.needMore': 'Fewer than 2 passed rounds',
+        'kpi.mismatch': 'Environment mismatch',
         'detail.back': 'Back to list',
         'detail.name': 'Name',
         'detail.rename': 'Rename',
@@ -266,8 +307,10 @@ window.__ModuleLoader__.load({
         'detail.createdAt': 'Created',
         'detail.id': 'Batch ID',
         'detail.env': 'Batch environment',
-        'detail.skill': 'Speedtest skill',
+        'detail.skill': 'Benchmark task',
         'detail.batchDir': 'Batch directory',
+        'detail.notes': 'Logs & notes',
+        'detail.warnings': 'Warnings',
         'detail.copy': 'Copy',
         'detail.copied': 'Copied',
         'result.title': 'Rounds',
@@ -280,16 +323,15 @@ window.__ModuleLoader__.load({
         'result.tokens': 'Tokens',
         'result.tools': 'Tool calls',
         'result.error': 'Error',
-        'result.sample': 'samples n={n}',
+        'result.sample': 'valid n={n}',
         'result.passed': 'passed {passed}/{total}',
         'result.median': 'Median',
         'result.mad': 'MAD',
-        'result.failed': 'Rounds that did not pass',
         'result.empty': 'No round results in this batch yet.',
         'result.pending': 'Waiting for the first round…',
-        'result.mismatch': 'Environment mismatch — medians were not merged.',
-        'result.insufficient': 'Not enough samples (n<2); median/MAD are not computed.',
-        'result.statsHint': 'Median and MAD are meaningful only with n≥2 samples from one environment.',
+        'result.mismatch': 'Environment mismatch across rounds — medians were not merged.',
+        'result.insufficient': 'Fewer than 2 passed rounds; median and MAD are not computed.',
+        'result.noPassed': 'No passed rounds in this batch yet.',
         'status.queued': 'Queued',
         'status.running': 'Running',
         'status.done': 'Done',
@@ -316,7 +358,97 @@ window.__ModuleLoader__.load({
       },
     }
 
-    const SECTION_CSS = ".mst-root{display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:1.5;color:var(--dsw-alias-label-primary)}\n.mst-head{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}\n.mst-head-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}\n.mst-title{margin:0;font-size:15px;line-height:22px;font-weight:600}\n.mst-subtitle{margin:0;font-size:12px;line-height:18px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}\n.mst-card{box-sizing:border-box;display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:0.5px solid var(--dsw-alias-border-l4,transparent);border-radius:var(--dsw-radius-md,8px)}\n.mst-card-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}\n.mst-card-title{margin:0;font-size:13px;line-height:20px;font-weight:600;flex:none}\n.mst-spacer{flex:1 1 auto}\n.mst-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:6px 14px}\n.mst-kv{display:flex;flex-direction:column;gap:1px;min-width:0}\n.mst-k{font-size:11px;line-height:16px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}\n.mst-v{font-size:13px;line-height:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}\n.mst-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}\n.mst-label{flex:none;min-width:52px;font-size:12px;color:var(--dsw-alias-label-secondary)}\n.mst-input{box-sizing:border-box;min-width:0;padding:5px 8px;border:0.5px solid var(--dsw-alias-border-l4,transparent);border-radius:var(--dsw-radius-md,8px);background:transparent;color:inherit;font-family:inherit;font-size:13px;line-height:1.4}\n.mst-input:focus{outline:none;border-color:var(--dsw-alias-state-business-primary,currentColor)}\n.mst-input[data-invalid=true]{border-color:var(--dsw-alias-state-error-primary,currentColor)}\n.mst-input.mst-num{width:80px}.mst-select{box-sizing:border-box;max-width:360px;height:26px;padding:0 6px;border:0.5px solid var(--dsw-alias-border-l3,currentColor);border-radius:var(--dsw-radius-sm,6px);background:var(--dsw-alias-bg-layer-1,transparent);color:inherit;font-family:inherit;font-size:12px;line-height:17px}\n.mst-input.mst-grow{flex:1 1 220px}\n.mst-btn{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:30px;padding:0 12px;border:0.5px solid var(--dsw-alias-border-l4,transparent);border-radius:var(--dsw-radius-md,8px);background:transparent;color:inherit;font-family:inherit;font-size:13px;line-height:1;cursor:pointer;white-space:nowrap}\n.mst-btn:hover:not(:disabled){background:var(--dsw-alias-interactive-hover,var(--dsw-alias-bg-layer-2,transparent))}\n.mst-btn:disabled{cursor:not-allowed;opacity:.45}\n.mst-btn:focus-visible{outline:var(--dsw-focus-ring-width,2px) solid var(--dsw-alias-state-business-primary,currentColor);outline-offset:1px}\n.mst-btn-primary{border:none;background:var(--dsw-alias-button-primary-fill,var(--dsw-alias-state-business-primary,currentColor));color:var(--dsw-alias-label-primary-foreground,inherit)}\n.mst-btn-primary:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover,var(--dsw-alias-button-primary-fill,transparent))}\n.mst-btn-danger{color:var(--dsw-alias-state-error-primary,var(--dsw-alias-label-primary))}\n.mst-btn-small{height:24px;padding:0 8px;font-size:12px}\n.mst-btn-link{height:auto;padding:0;border:none;background:transparent;color:var(--dsw-alias-state-business-primary,var(--dsw-alias-label-primary));cursor:pointer;font-family:inherit;font-size:12px;line-height:18px}\n.mst-muted{font-size:12px;line-height:17px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}\n.mst-warn{font-size:12px;line-height:17px;color:var(--dsw-alias-label-warning,var(--dsw-alias-state-warn-label,var(--dsw-alias-label-secondary)))}\n.mst-error{font-size:12px;line-height:17px;color:var(--dsw-alias-state-error-primary,inherit);word-break:break-word}\n.mst-notice{font-size:12px;line-height:17px;color:var(--dsw-alias-label-success,var(--dsw-alias-state-success-primary,inherit))}\n.mst-badge{flex:none;display:inline-flex;align-items:center;padding:1px 7px;border:0.5px solid var(--dsw-alias-border-l4,currentColor);border-radius:999px;font-size:11px;line-height:16px;white-space:nowrap;color:var(--dsw-alias-label-secondary)}\n.mst-badge[data-status=passed],.mst-badge[data-status=done]{color:var(--dsw-alias-label-success,var(--dsw-alias-state-success-primary));border-color:currentColor}\n.mst-badge[data-status=running],.mst-badge[data-status=queued]{color:var(--dsw-alias-state-business-primary,var(--dsw-alias-label-secondary));border-color:currentColor}\n.mst-badge[data-status=failed],.mst-badge[data-status=timeout],.mst-badge[data-status=no-report]{color:var(--dsw-alias-state-error-primary);border-color:currentColor}\n.mst-badge[data-status=aborted],.mst-badge[data-status=interrupted]{color:var(--dsw-alias-label-secondary);border-color:currentColor}\n.mst-table-wrap{width:100%;overflow-x:auto}\n.mst-table{width:100%;border-collapse:collapse;font-size:12px;line-height:17px}\n.mst-table th{padding:4px 8px;text-align:left;font-weight:500;white-space:nowrap;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary));border-bottom:0.5px solid var(--dsw-alias-border-l4,transparent)}.mst-table th.mst-num{text-align:right}\n.mst-table td{padding:4px 8px;vertical-align:top;border-bottom:0.5px solid var(--dsw-alias-border-l4,transparent)}\n.mst-table tr:last-child td{border-bottom:none}\n.mst-num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}\n.mst-stats{display:flex;gap:18px;flex-wrap:wrap}\n.mst-stat{display:flex;flex-direction:column;gap:1px;min-width:0}\n.mst-stat-v{font-size:16px;line-height:22px;font-weight:600;font-variant-numeric:tabular-nums}\n.mst-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;line-height:16px;color:var(--dsw-alias-label-secondary);word-break:break-all}\n.mst-scroll{max-height:196px;overflow-y:auto}\n.mst-archive-item{box-sizing:border-box;width:100%;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 8px;border:none;border-radius:var(--dsw-radius-sm,6px);background:transparent;color:inherit;font-family:inherit;font-size:12px;line-height:17px;text-align:left;cursor:pointer}\n.mst-archive-item:hover{background:var(--dsw-alias-bg-layer-2,var(--dsw-alias-bg-hover,transparent))}\n.mst-archive-item:focus-visible{outline:var(--dsw-focus-ring-width,2px) solid var(--dsw-alias-state-business-primary,currentColor);outline-offset:-1px}\n.mst-archive-item[data-current=true]{background:var(--dsw-alias-bg-layer-3,var(--dsw-alias-bg-hover,transparent))}\n.mst-archive-name{display:inline-block;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;font-weight:600}.mst-archive-row{cursor:pointer}.mst-archive-row:hover td{background:var(--dsw-alias-bg-layer-2,var(--dsw-alias-bg-hover,transparent))}.mst-cell-run{display:inline-block;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;color:var(--dsw-alias-label-secondary)}\n.mst-archive-time{flex:none;font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-secondary)}\n.mst-archive-model{flex:0 1 180px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}\n.mst-archive-med{flex:none;font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}\n.mst-confirm{box-sizing:border-box;display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:0.5px solid var(--dsw-alias-state-error-primary,var(--dsw-alias-border-l4,transparent));border-radius:var(--dsw-radius-md,8px)}\n.mst-detail-head{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}\n.mst-detail-name{margin:0;font-size:15px;line-height:22px;font-weight:600;word-break:break-word}\n.mst-empty{font-size:12px;line-height:17px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}\n.mst-env-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 14px}"
+    const SECTION_CSS = [
+      '.mst-root{display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:1.5;color:var(--dsw-alias-label-primary);min-width:0}',
+      '.mst-card{box-sizing:border-box;display:flex;flex-direction:column;gap:10px;padding:12px 14px;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.24));border-radius:var(--dsw-radius-md,8px);background:transparent;min-width:0}',
+      '.mst-card-active{border-color:var(--dsw-alias-state-business-primary,#2563eb);background:var(--dsw-alias-bg-l2,rgba(37,99,235,0.05))}',
+      '.mst-card-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}',
+      '.mst-card-title{margin:0;font-size:13px;line-height:20px;font-weight:600;color:var(--dsw-alias-label-primary);flex:none}',
+      '.mst-count-pill{display:inline-flex;align-items:center;padding:1px 7px;border-radius:999px;font-size:11px;line-height:16px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary));background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.1))}',
+      '.mst-spacer{flex:1 1 auto}',
+      '.mst-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}',
+      '.mst-form-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}',
+      '.mst-field{display:inline-flex;align-items:center;gap:6px;min-width:0}',
+      '.mst-field-grow{flex:1 1 240px;display:flex;align-items:center;gap:6px;min-width:0}',
+      '.mst-label{flex:none;font-size:12px;font-weight:500;color:var(--dsw-alias-label-secondary,var(--dsw-alias-label-tertiary));white-space:nowrap}',
+      '.mst-select{box-sizing:border-box;flex:1 1 auto;min-width:140px;max-width:100%;height:30px;padding:0 8px;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.28));border-radius:var(--dsw-radius-sm,6px);background:var(--dsw-alias-bg-l1,transparent);color:var(--dsw-alias-label-primary);font-family:inherit;font-size:13px;line-height:28px}',
+      '.mst-select:focus{outline:none;border-color:var(--dsw-alias-state-business-primary,#2563eb)}',
+      '.mst-stepper{display:inline-flex;align-items:center;height:30px;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.28));border-radius:var(--dsw-radius-sm,6px);overflow:hidden;background:transparent}',
+      '.mst-stepper[data-invalid=true]{border-color:var(--dsw-alias-state-danger-primary,#dc2626)}',
+      '.mst-step-btn{box-sizing:border-box;width:26px;height:100%;padding:0;border:none;background:transparent;color:var(--dsw-alias-label-secondary,inherit);font-family:inherit;font-size:14px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}',
+      '.mst-step-btn:hover:not(:disabled){background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.1));color:var(--dsw-alias-label-primary)}',
+      '.mst-step-btn:disabled{opacity:.35;cursor:not-allowed}',
+      '.mst-step-input{box-sizing:border-box;width:36px;height:100%;padding:0;border:none;border-left:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.2));border-right:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.2));background:transparent;color:var(--dsw-alias-label-primary);font-family:inherit;font-size:13px;font-weight:500;text-align:center;font-variant-numeric:tabular-nums;-moz-appearance:textfield}',
+      '.mst-step-input::-webkit-outer-spin-button,.mst-step-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}',
+      '.mst-step-input:focus{outline:none;background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.06))}',
+      '.mst-input{box-sizing:border-box;min-width:0;height:30px;padding:0 9px;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.28));border-radius:var(--dsw-radius-sm,6px);background:transparent;color:var(--dsw-alias-label-primary);font-family:inherit;font-size:13px;line-height:28px}',
+      '.mst-input:focus{outline:none;border-color:var(--dsw-alias-state-business-primary,#2563eb)}',
+      '.mst-input[data-invalid=true]{border-color:var(--dsw-alias-state-danger-primary,#dc2626)}',
+      '.mst-input.mst-grow{flex:1 1 220px}',
+      '.mst-btn{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:5px;height:30px;padding:0 12px;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.28));border-radius:var(--dsw-radius-sm,6px);background:transparent;color:var(--dsw-alias-label-primary);font-family:inherit;font-size:13px;font-weight:500;line-height:1;cursor:pointer;white-space:nowrap;transition:background-color 120ms ease,border-color 120ms ease}',
+      '.mst-btn:hover:not(:disabled){background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.08))}',
+      '.mst-btn:disabled{cursor:not-allowed;opacity:.45}',
+      '.mst-btn:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary,#2563eb);outline-offset:1px}',
+      '.mst-btn-primary{border:none;background:var(--dsw-alias-state-business-primary,#2563eb);color:#ffffff}',
+      '.mst-btn-primary:hover:not(:disabled){filter:brightness(1.06);background:var(--dsw-alias-state-business-primary,#2563eb)}',
+      '.mst-btn-danger{color:var(--dsw-alias-state-danger-primary,var(--dsw-alias-state-error-primary,#dc2626));border-color:rgba(220,38,38,0.35)}',
+      '.mst-btn-danger:hover:not(:disabled){background:rgba(220,38,38,0.08);border-color:var(--dsw-alias-state-danger-primary,#dc2626)}',
+      '.mst-btn-danger-solid{border:none;background:var(--dsw-alias-state-danger-primary,var(--dsw-alias-state-error-primary,#dc2626));color:#ffffff}',
+      '.mst-btn-danger-solid:hover:not(:disabled){filter:brightness(1.06);background:var(--dsw-alias-state-danger-primary,#dc2626)}',
+      '.mst-btn-small{height:26px;padding:0 9px;font-size:12px}',
+      '.mst-banner{box-sizing:border-box;display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-radius:var(--dsw-radius-sm,6px);font-size:12px;line-height:18px;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.24))}',
+      '.mst-banner-notice{border-color:rgba(22,163,74,0.38);background:rgba(22,163,74,0.08);color:var(--dsw-alias-state-success-primary,#15803d)}',
+      '.mst-banner-warn{border-color:rgba(217,119,6,0.4);background:rgba(217,119,6,0.08);color:var(--dsw-alias-state-warning-primary,#b45309)}',
+      '.mst-banner-error{border-color:rgba(220,38,38,0.4);background:rgba(220,38,38,0.08);color:var(--dsw-alias-state-danger-primary,var(--dsw-alias-state-error-primary,#dc2626))}',
+      '.mst-muted{font-size:12px;line-height:18px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}',
+      '.mst-warn{font-size:12px;line-height:18px;color:var(--dsw-alias-state-warning-primary,#b45309)}',
+      '.mst-error{font-size:12px;line-height:18px;color:var(--dsw-alias-state-danger-primary,var(--dsw-alias-state-error-primary,#dc2626));word-break:break-word}',
+      '.mst-progress-track{width:100%;height:5px;border-radius:999px;background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.16));overflow:hidden}',
+      '.mst-progress-fill{height:100%;border-radius:999px;background:var(--dsw-alias-state-business-primary,#2563eb);transition:width 240ms ease}',
+      '.mst-badge{flex:none;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;line-height:15px;white-space:nowrap;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.28));background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.08));color:var(--dsw-alias-label-secondary)}',
+      '.mst-badge[data-status=passed],.mst-badge[data-status=done],.mst-badge[data-cache=hit]{color:var(--dsw-alias-state-success-primary,#15803d);border-color:rgba(22,163,74,0.32);background:rgba(22,163,74,0.09)}',
+      '.mst-badge[data-status=running],.mst-badge[data-status=queued]{color:var(--dsw-alias-state-business-primary,#2563eb);border-color:rgba(37,99,235,0.32);background:rgba(37,99,235,0.09)}',
+      '.mst-badge[data-status=failed],.mst-badge[data-status=timeout],.mst-badge[data-status=no-report]{color:var(--dsw-alias-state-danger-primary,var(--dsw-alias-state-error-primary,#dc2626));border-color:rgba(220,38,38,0.32);background:rgba(220,38,38,0.09)}',
+      '.mst-badge[data-status=aborted],.mst-badge[data-status=interrupted],.mst-badge[data-cache=miss]{color:var(--dsw-alias-label-secondary);border-color:var(--dsw-alias-border-l2,rgba(127,127,127,0.26));background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.07))}',
+      '.mst-table-wrap{width:100%;overflow-x:auto;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.22));border-radius:var(--dsw-radius-sm,6px)}',
+      '.mst-table{width:100%;border-collapse:collapse;font-size:12px;line-height:18px}',
+      '.mst-table thead th{padding:7px 10px;text-align:left;font-weight:500;font-size:11px;white-space:nowrap;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary));background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.06));border-bottom:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.22))}',
+      '.mst-table thead th.mst-num{text-align:right}',
+      '.mst-table tbody td{padding:8px 10px;vertical-align:middle;border-bottom:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.16))}',
+      '.mst-table tbody tr:last-child td{border-bottom:none}',
+      '.mst-num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}',
+      '.mst-num-strong{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;font-weight:600}',
+      '.mst-archive-row{cursor:pointer;transition:background-color 100ms ease}',
+      '.mst-archive-row:hover td{background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.06))}',
+      '.mst-archive-row:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary,#2563eb);outline-offset:-2px}',
+      '.mst-archive-row[data-current=true] td{background:rgba(37,99,235,0.06)}',
+      '.mst-archive-main{display:flex;flex-direction:column;gap:2px;min-width:0;max-width:300px}',
+      '.mst-archive-name{font-weight:600;font-size:13px;line-height:18px;color:var(--dsw-alias-label-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.mst-archive-sub{font-size:11px;line-height:15px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.mst-archive-time{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}',
+      '.mst-chevron{width:18px;padding-left:0 !important;text-align:right;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary));font-size:14px}',
+      '.mst-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px}',
+      '.mst-kpi{box-sizing:border-box;display:flex;flex-direction:column;gap:3px;padding:10px 12px;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.22));border-radius:var(--dsw-radius-md,8px);background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.04));min-width:0}',
+      '.mst-kpi-label{font-size:11px;line-height:16px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+      '.mst-kpi-value{font-size:18px;line-height:24px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-primary);white-space:nowrap}',
+      '.mst-kpi-value[data-tone=ok]{color:var(--dsw-alias-state-success-primary,#15803d)}',
+      '.mst-kpi-value[data-tone=bad]{color:var(--dsw-alias-state-danger-primary,var(--dsw-alias-state-error-primary,#dc2626))}',
+      '.mst-kpi-sub{font-size:11px;line-height:15px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.mst-env-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 16px}',
+      '.mst-kv{display:flex;flex-direction:column;gap:2px;min-width:0}',
+      '.mst-k{font-size:11px;line-height:16px;color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary))}',
+      '.mst-v{font-size:13px;line-height:18px;font-weight:500;color:var(--dsw-alias-label-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.mst-detail-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}',
+      '.mst-detail-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}',
+      '.mst-detail-name{margin:0;font-size:16px;line-height:24px;font-weight:600;color:var(--dsw-alias-label-primary);word-break:break-word}',
+      '.mst-id-btn{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.22));border-radius:var(--dsw-radius-sm,6px);background:var(--dsw-alias-bg-l2,rgba(127,127,127,0.05));color:var(--dsw-alias-label-tertiary,var(--dsw-alias-label-secondary));font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;cursor:pointer}',
+      '.mst-id-btn:hover{color:var(--dsw-alias-label-primary);border-color:var(--dsw-alias-border-l2,rgba(127,127,127,0.4))}',
+      '.mst-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;line-height:16px;color:var(--dsw-alias-label-secondary);word-break:break-all}',
+      '.mst-note-list{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto}',
+      '.mst-confirm{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:0.5px solid rgba(220,38,38,0.45);border-radius:var(--dsw-radius-md,8px);background:rgba(220,38,38,0.07)}',
+      '.mst-empty-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:24px 16px;border:0.5px dashed var(--dsw-alias-border-l2,rgba(127,127,127,0.28));border-radius:var(--dsw-radius-sm,6px);text-align:center}',
+      '.mst-dir-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:4px;border-top:0.5px solid var(--dsw-alias-border-l2,rgba(127,127,127,0.16))}',
+    ].join('\n')
 
     /**
      * Tiny external store shared by the section and the module-level jump watcher.
@@ -372,9 +504,9 @@ window.__ModuleLoader__.load({
       return isNumber(value) ? value.toFixed(1) : '—'
     }
 
-    /** @param {unknown} value - tokens per second. @returns {string} two decimals or the em dash. */
+    /** @param {unknown} value - tokens per second. @returns {string} one decimal or the em dash. */
     function speedText(value) {
-      return isNumber(value) ? value.toFixed(2) : '—'
+      return isNumber(value) ? value.toFixed(1) : '—'
     }
 
     /** @param {unknown} n - sample size. @returns {string} integer with thousands separators or the em dash. */
@@ -412,23 +544,37 @@ window.__ModuleLoader__.load({
     /** @param {unknown} value - statistic. @param {number} digits - decimals. @returns {string} formatted value. */
     function statNumber(value, digits) {
       if (!isNumber(value)) return '—'
-      return digits === 0 ? String(Math.round(value)) : value.toFixed(digits)
+      return digits === 0 ? countText(value) : value.toFixed(digits)
     }
 
-    /** @param {Array<Record<string, any>>} rounds - round records. @returns {Array<{ key: string, digits: number, values: any }>} statistic rows. */
+    /**
+     * Build statistics rows strictly from passed rounds (failed/timeout/aborted rounds must not pollute medians).
+     * @param {Array<Record<string, any>>} rounds - round records.
+     * @returns {Array<{ key: string, metric: string, digits: number, values: any }>} statistic rows.
+     */
     function buildStatsRows(rounds) {
-      const collect = getter => rounds.map(getter).filter(isNumber)
+      const passed = rounds.filter(round => round && round.status === 'passed')
+      const collect = getter => passed.map(getter).filter(isNumber)
       const rows = [
-        { key: 'result.metric.elapsed', digits: 1, values: statsOfValues(collect(round => round.elapsedSeconds)) },
-        { key: 'result.metric.speed', digits: 2, values: statsOfValues(collect(round => round.speedTps)) },
-        { key: 'result.metric.request', digits: 1, values: statsOfValues(collect(round => round.modelRequestSeconds)) },
-        { key: 'result.metric.toolTime', digits: 1, values: statsOfValues(collect(round => round.toolSeconds)) },
-        { key: 'result.metric.stream', digits: 2, values: statsOfValues(collect(round => round.streamSpeedTps)) },
-        { key: 'result.metric.tokens', digits: 0, values: statsOfValues(collect(round => round.tokens)) },
-        { key: 'result.metric.tools', digits: 0, values: statsOfValues(collect(round => round.toolCount)) },
+        { key: 'result.metric.elapsed', metric: 'elapsed', digits: 1, values: statsOfValues(collect(round => round.elapsedSeconds)) },
+        { key: 'result.metric.speed', metric: 'speed', digits: 1, values: statsOfValues(collect(round => round.speedTps)) },
+        { key: 'result.metric.request', metric: 'request', digits: 1, values: statsOfValues(collect(round => round.modelRequestSeconds)) },
+        { key: 'result.metric.toolTime', metric: 'toolTime', digits: 1, values: statsOfValues(collect(round => round.toolSeconds)) },
+        { key: 'result.metric.stream', metric: 'stream', digits: 1, values: statsOfValues(collect(round => round.streamSpeedTps)) },
+        { key: 'result.metric.tokens', metric: 'tokens', digits: 0, values: statsOfValues(collect(round => round.tokens)) },
+        { key: 'result.metric.tools', metric: 'tools', digits: 0, values: statsOfValues(collect(round => round.toolCount)) },
       ]
       // 老存档没有新字段时整行是空的，直接不显示，避免一排「—」。
       return rows.filter(row => row.values.n > 0)
+    }
+
+    /**
+     * Classify a batch note as warning vs routine lifecycle log.
+     * @param {string} note - note text.
+     * @returns {boolean} true when the note describes a warning or anomaly.
+     */
+    function isWarningNote(note) {
+      return /(?:不一致|失败|异常|警告|标记|停在审批|中止|缺失|越界|归属|拒绝|未生成|未知|无法|error|fail|mismatch|warn)/iu.test(note)
     }
 
     /**
@@ -522,6 +668,22 @@ window.__ModuleLoader__.load({
       } catch {
         return value
       }
+    }
+
+    /**
+     * Compact timestamp for the archive table: MM-DD HH:mm (with YYYY- when from another year).
+     * @param {unknown} value - ISO timestamp.
+     * @returns {string} compact time text or em dash.
+     */
+    function compactTimeText(value) {
+      if (typeof value !== 'string' || value === '') return '—'
+      const matched = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/u.exec(value)
+      if (matched !== null) {
+        const currentYear = String(new Date().getFullYear())
+        const prefix = matched[1] === currentYear ? '' : matched[1] + '-'
+        return prefix + matched[2] + '-' + matched[3] + ' ' + matched[4] + ':' + matched[5]
+      }
+      return timeText(value)
     }
 
     /**
@@ -929,14 +1091,15 @@ window.__ModuleLoader__.load({
           }
 
           const cancelActive = async () => {
-            if (activeBatchId === '' || cancelling) return
+            const targetId = activeBatchId !== '' ? activeBatchId : selectedBatchId
+            if (targetId === '' || cancelling) return
             setCancelling(true)
             setError(null)
             try {
               await requestJson(ROUTES.cancel, {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
-                body: JSON.stringify({ batchId: activeBatchId }),
+                body: JSON.stringify({ batchId: targetId }),
               })
               setNotice(t('notice.cancelled'))
               void loadList()
@@ -1016,16 +1179,23 @@ window.__ModuleLoader__.load({
             }
           }
 
-          const noticeRow = notice === '' ? null : h('p', { className: 'mst-notice', role: 'status', style: { margin: 0 } }, notice)
+          const noticeRow =
+            notice === ''
+              ? null
+              : h('div', { className: 'mst-banner mst-banner-notice', role: 'status' }, notice)
           const errorRow =
             error === null
               ? null
-              : h('p', { className: 'mst-error', role: 'alert', style: { margin: 0 } }, t('error.title') + ' · ' + error.text)
+              : h('div', { className: 'mst-banner mst-banner-error', role: 'alert' }, t('error.title') + ' · ' + error.text)
 
-          const roundsInvalid = (() => {
-            const parsed = Number(roundsText)
-            return roundsText !== '' && (!Number.isInteger(parsed) || parsed < MIN_ROUNDS || parsed > maxRounds)
-          })()
+          const parsedRounds = Number(roundsText)
+          const roundsInvalid = roundsText !== '' && (!Number.isInteger(parsedRounds) || parsedRounds < MIN_ROUNDS || parsedRounds > maxRounds)
+          const displayRoundsCount = Number.isInteger(parsedRounds) && parsedRounds >= MIN_ROUNDS && parsedRounds <= maxRounds ? parsedRounds : defaultRounds
+          const stepRounds = delta => {
+            const base = Number.isInteger(parsedRounds) ? parsedRounds : defaultRounds
+            const next = Math.min(maxRounds, Math.max(MIN_ROUNDS, base + delta))
+            setRoundsText(String(next))
+          }
 
           const workspaceOptions = workspaces.map(item =>
             h('option', { key: item.workspaceId, value: item.workspaceId }, item.title + ' · ' + item.path),
@@ -1033,71 +1203,111 @@ window.__ModuleLoader__.load({
           const startCard = h(
             'section',
             { className: 'mst-card', key: 'start' },
-            h('h3', { className: 'mst-card-title' }, t('form.title')),
             h(
               'div',
-              { className: 'mst-row' },
-              h('label', { className: 'mst-label', htmlFor: 'mst-workspace' }, t('form.workspace')),
-              workspaces.length === 0
-                ? h('span', { className: 'mst-muted' }, workspaceError === '' ? t('form.workspaceLoading') : workspaceError)
-                : h(
-                    'select',
+              { className: 'mst-card-head' },
+              h('h3', { className: 'mst-card-title' }, t('form.title')),
+              h('span', { className: 'mst-spacer' }),
+              h('span', { className: 'mst-muted' }, t('form.meta', { minutes: timeoutMinutes })),
+            ),
+            h(
+              'div',
+              { className: 'mst-form-bar' },
+              h(
+                'div',
+                { className: 'mst-field-grow' },
+                h('label', { className: 'mst-label', htmlFor: 'mst-workspace' }, t('form.workspace')),
+                workspaces.length === 0
+                  ? h('span', { className: 'mst-muted' }, workspaceError === '' ? t('form.workspaceLoading') : workspaceError)
+                  : h(
+                      'select',
+                      {
+                        id: 'mst-workspace',
+                        className: 'mst-select',
+                        value: workspaceId,
+                        onChange: event => store.set(current => ({ ...current, workspaceId: event.target.value })),
+                      },
+                      workspaceId === '' ? h('option', { value: '' }, t('form.workspacePick')) : null,
+                      workspaceOptions,
+                    ),
+              ),
+              h(
+                'div',
+                { className: 'mst-field' },
+                h('label', { className: 'mst-label', htmlFor: 'mst-rounds' }, t('form.rounds')),
+                h(
+                  'div',
+                  { className: 'mst-stepper', 'data-invalid': roundsInvalid ? 'true' : 'false' },
+                  h(
+                    'button',
                     {
-                      id: 'mst-workspace',
-                      className: 'mst-select',
-                      value: workspaceId,
-                      onChange: event => store.set(current => ({ ...current, workspaceId: event.target.value })),
+                      type: 'button',
+                      className: 'mst-step-btn',
+                      'aria-label': t('form.roundsDec'),
+                      disabled: displayRoundsCount <= MIN_ROUNDS,
+                      onClick: () => stepRounds(-1),
                     },
-                    workspaceId === '' ? h('option', { value: '' }, t('form.workspacePick')) : null,
-                    workspaceOptions,
+                    '−',
                   ),
-            ),
-            h(
-              'div',
-              { className: 'mst-row' },
-              h('label', { className: 'mst-label', htmlFor: 'mst-rounds' }, t('form.rounds')),
-              h('input', {
-                id: 'mst-rounds',
-                className: 'mst-input mst-num',
-                type: 'number',
-                min: MIN_ROUNDS,
-                max: maxRounds,
-                step: 1,
-                value: roundsText,
-                'data-invalid': roundsInvalid ? 'true' : 'false',
-                onChange: event => setRoundsText(event.target.value),
-              }),
-              h('span', { className: 'mst-muted' }, t('form.roundsHint', { min: MIN_ROUNDS, max: maxRounds, defaults: defaultRounds })),
-            ),
-            h(
-              'div',
-              { className: 'mst-row' },
+                  h('input', {
+                    id: 'mst-rounds',
+                    className: 'mst-step-input',
+                    type: 'number',
+                    min: MIN_ROUNDS,
+                    max: maxRounds,
+                    step: 1,
+                    value: roundsText,
+                    'data-invalid': roundsInvalid ? 'true' : 'false',
+                    onChange: event => setRoundsText(event.target.value),
+                  }),
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'mst-step-btn',
+                      'aria-label': t('form.roundsInc'),
+                      disabled: displayRoundsCount >= maxRounds,
+                      onClick: () => stepRounds(1),
+                    },
+                    '+',
+                  ),
+                ),
+                h('span', { className: 'mst-muted' }, t('form.roundsHint', { min: MIN_ROUNDS, max: maxRounds })),
+              ),
               h(
                 'button',
                 { type: 'button', className: 'mst-btn mst-btn-primary', onClick: start, disabled: starting || active },
-                starting ? t('form.starting') : t('form.start', { count: Number(roundsText) || defaultRounds }),
+                starting ? t('form.starting') : t('form.start', { count: displayRoundsCount }),
               ),
-              h('span', { className: 'mst-muted' }, t('form.meta', { minutes: timeoutMinutes })),
             ),
-            h('p', { className: 'mst-muted', style: { margin: 0 } }, t('form.note', { count: Number(roundsText) || defaultRounds })),
+            h('p', { className: 'mst-muted', style: { margin: 0 } }, t('form.note', { count: displayRoundsCount })),
           )
+
+          const activeCurrentRound = isNumber(pick(activeBatch, ['currentRound'])) ? pick(activeBatch, ['currentRound']) : 0
+          const activeTotalRounds = isNumber(pick(activeBatch, ['rounds'])) ? Math.max(1, pick(activeBatch, ['rounds'])) : 1
+          const activePercent = Math.min(100, Math.max(8, Math.round((activeCurrentRound / activeTotalRounds) * 100)))
 
           const progressCard = active
             ? h(
                 'section',
-                { className: 'mst-card', key: 'progress' },
+                { className: 'mst-card mst-card-active', key: 'progress' },
                 h(
                   'div',
                   { className: 'mst-card-head' },
                   h('h3', { className: 'mst-card-title' }, t('progress.title')),
                   h('span', { className: 'mst-badge', 'data-status': pick(activeBatch, ['status']) }, statusText(pick(activeBatch, ['status']))),
-                  h('span', { className: 'mst-muted' }, t('progress.round', { current: countText(pick(activeBatch, ['currentRound'])), total: countText(pick(activeBatch, ['rounds'])) })),
-                  h('span', { style: { flex: '1 1 auto' } }),
+                  h('span', { className: 'mst-muted' }, t('progress.round', { current: countText(activeCurrentRound), total: countText(activeTotalRounds) })),
+                  h('span', { className: 'mst-spacer' }),
                   h(
                     'button',
                     { type: 'button', className: 'mst-btn mst-btn-danger mst-btn-small', onClick: cancelActive, disabled: cancelling },
                     cancelling ? t('progress.cancelling') : t('progress.cancel'),
                   ),
+                ),
+                h(
+                  'div',
+                  { className: 'mst-progress-track', role: 'progressbar', 'aria-valuenow': activePercent, 'aria-valuemin': 0, 'aria-valuemax': 100 },
+                  h('div', { className: 'mst-progress-fill', style: { width: activePercent + '%' } }),
                 ),
                 h('p', { className: 'mst-muted', style: { margin: 0 } }, t('progress.cancelHint')),
               )
@@ -1110,13 +1320,17 @@ window.__ModuleLoader__.load({
               'div',
               { className: 'mst-card-head' },
               h('h3', { className: 'mst-card-title' }, t('list.title')),
-              h('span', { style: { flex: '1 1 auto' } }),
-              h('span', { className: 'mst-muted', title: t('list.buildHint') }, 'v' + CLIENT_VERSION),
+              rows.length > 0 ? h('span', { className: 'mst-count-pill' }, t('list.count', { count: rows.length })) : null,
+              h('span', { className: 'mst-spacer' }),
               h('button', { type: 'button', className: 'mst-btn mst-btn-small', onClick: () => void loadList(), disabled: listLoading }, listLoading ? t('loading') : t('refresh')),
             ),
-            listError === '' ? null : h('p', { className: 'mst-error', role: 'alert', style: { margin: 0 } }, listError),
+            listError === '' ? null : h('div', { className: 'mst-banner mst-banner-error', role: 'alert' }, listError),
             rows.length === 0
-              ? h('p', { className: 'mst-empty', style: { margin: 0 } }, listLoading ? t('list.loading') : t('list.empty'))
+              ? h(
+                  'div',
+                  { className: 'mst-empty-box' },
+                  h('span', { className: 'mst-muted' }, listLoading ? t('list.loading') : t('list.empty')),
+                )
               : h(
                   'div',
                   { className: 'mst-table-wrap' },
@@ -1135,7 +1349,7 @@ window.__ModuleLoader__.load({
                         h('th', { className: 'mst-num' }, t('list.col.elapsed')),
                         h('th', { className: 'mst-num' }, t('list.col.speed')),
                         h('th', null, t('list.col.created')),
-                        h('th', null, t('list.col.model')),
+                        h('th', { className: 'mst-chevron', 'aria-hidden': 'true' }),
                       ),
                     ),
                     h(
@@ -1146,6 +1360,16 @@ window.__ModuleLoader__.load({
                         const rowStatus = typeof row.status === 'string' ? row.status : ''
                         const medians = row.medians !== null && typeof row.medians === 'object' ? row.medians : null
                         const rowName = displayName(row, rows, id)
+                        const rowProvider = typeof pick(row, ['env', 'provider']) === 'string' ? pick(row, ['env', 'provider']) : ''
+                        const rowModel = typeof pick(row, ['env', 'model']) === 'string' ? pick(row, ['env', 'model']) : ''
+                        const rowPreset = typeof pick(row, ['env', 'agentPreset']) === 'string' ? pick(row, ['env', 'agentPreset']) : ''
+                        const subParts = []
+                        if (rowModel !== '') subParts.push(rowModel)
+                        if (rowProvider !== '') subParts.push(rowProvider)
+                        if (rowPreset !== '') subParts.push(rowPreset)
+                        const subText = subParts.join(' · ')
+                        const medElapsed = medians === null ? undefined : medians.elapsedSeconds
+                        const medSpeed = medians === null ? undefined : medians.speedTps
                         return h(
                           'tr',
                           {
@@ -1156,16 +1380,28 @@ window.__ModuleLoader__.load({
                             tabIndex: 0,
                             onClick: () => openDetail(id),
                             onKeyDown: event => {
-                              if (event.key === 'Enter') openDetail(id)
+                              if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault()
+                                openDetail(id)
+                              }
                             },
                           },
-                          h('td', null, h('span', { className: 'mst-archive-name', title: rowName }, rowName)),
+                          h(
+                            'td',
+                            null,
+                            h(
+                              'div',
+                              { className: 'mst-archive-main' },
+                              h('span', { className: 'mst-archive-name', title: rowName }, rowName),
+                              subText === '' ? null : h('span', { className: 'mst-archive-sub', title: subText }, subText),
+                            ),
+                          ),
                           h('td', null, h('span', { className: 'mst-badge', 'data-status': rowStatus }, statusText(rowStatus))),
                           h('td', { className: 'mst-num' }, t('list.rounds', { rounds: countText(row.rounds), passed: countText(row.passed) })),
-                          h('td', { className: 'mst-num' }, t('unit.seconds', { value: secondsText(medians === null ? undefined : medians.elapsedSeconds) })),
-                          h('td', { className: 'mst-num' }, t('unit.tps', { value: speedText(medians === null ? undefined : medians.speedTps) })),
-                          h('td', { className: 'mst-archive-time' }, timeText(row.createdAt)),
-                          h('td', { className: 'mst-archive-model' }, typeof pick(row, ['env', 'model']) === 'string' ? pick(row, ['env', 'model']) : ''),
+                          h('td', { className: 'mst-num' }, isNumber(medElapsed) ? t('unit.seconds', { value: secondsText(medElapsed) }) : t('common.dash')),
+                          h('td', { className: 'mst-num-strong' }, isNumber(medSpeed) ? t('unit.tps', { value: speedText(medSpeed) }) : t('common.dash')),
+                          h('td', { className: 'mst-archive-time', title: timeText(row.createdAt) }, compactTimeText(row.createdAt)),
+                          h('td', { className: 'mst-chevron', 'aria-hidden': 'true' }, '›'),
                         )
                       }),
                     ),
@@ -1181,42 +1417,47 @@ window.__ModuleLoader__.load({
           const detailActive = BATCH_ACTIVE.includes(detailStatus)
           const rounds = batchDoc && Array.isArray(batchDoc.rounds) ? batchDoc.rounds.filter(item => item !== null && typeof item === 'object') : []
           const summary = batchDoc && typeof batchDoc.summary === 'object' && batchDoc.summary !== null ? batchDoc.summary : null
-          const statBlock = (() => {
-            const block = pick(batchDoc, ['summary', 'stats', 'elapsedSeconds'])
-            if (block !== null && typeof block === 'object') return block
-            const legacy = pick(batchDoc, ['medians', 'elapsedSeconds'])
-            return isNumber(legacy) ? { median: legacy } : null
-          })()
           const environmentMismatch = pick(batchDoc, ['summary', 'environmentMismatch']) === true || pick(batchDoc, ['environmentMismatch']) === true
-          const failedRounds = rounds.filter(item => item.status !== 'passed' && item.status !== 'queued' && item.status !== 'running')
+          const statsRows = buildStatsRows(rounds)
+          const statRowByMetric = metric => statsRows.find(item => item.metric === metric) || null
+          const elapsedStats = statRowByMetric('elapsed')
+          const speedStats = statRowByMetric('speed')
+          const streamStats = statRowByMetric('stream')
+          const requestStats = statRowByMetric('request')
+          const passedCount = rounds.filter(item => item.status === 'passed').length
+          const totalCount = rounds.length > 0 ? rounds.length : (isNumber(pick(summary, ['total'])) ? pick(summary, ['total']) : 0)
+          const failedCount = Math.max(0, totalCount - passedCount)
+          const canAggregateMedian = !environmentMismatch && passedCount >= 2
+
           const hasTokenData = rounds.some(item => pickNumber(item, [['tokens'], ['totalTokens'], ['outputTokens'], ['metrics', 'totalTokens'], ['metrics', 'outputTokens'], ['metrics', 'tokens']]) !== undefined)
           const hasToolData = rounds.some(item => pickNumber(item, [['tools'], ['toolCalls'], ['toolCount'], ['metrics', 'toolCalls'], ['metrics', 'toolCount']]) !== undefined)
           const hasStreamData = rounds.some(item => isNumber(item.streamSpeedTps))
-          const cacheTextOf = round => {
+          const hasErrorData = rounds.some(item => typeof item.error === 'string' && item.error !== '')
+
+          const cacheBadgeOf = round => {
             const state = typeof round.cacheHit === 'string' ? round.cacheHit : ''
             if (state === 'hit') {
-              return isNumber(round.cacheReadTokens)
+              const label = isNumber(round.cacheReadTokens)
                 ? t('result.cacheHit') + ' · ' + countText(round.cacheReadTokens)
                 : t('result.cacheHit')
+              return h('span', { className: 'mst-badge', 'data-cache': 'hit' }, label)
             }
-            if (state === 'miss') return t('result.cacheMiss')
-            return t('result.cacheUnknown')
+            if (state === 'miss') return h('span', { className: 'mst-badge', 'data-cache': 'miss' }, t('result.cacheMiss'))
+            return h('span', { className: 'mst-muted' }, t('result.cacheUnknown'))
           }
-          const taskTextOf = round => {
-            const own = typeof round.taskVersion === 'string' ? round.taskVersion : ''
-            const shared = typeof pick(batchDoc, ['skill', 'taskVersion']) === 'string' ? pick(batchDoc, ['skill', 'taskVersion']) : ''
-            const version = own !== '' ? own : shared
-            return version === '' ? t('common.dash') : version
-          }
-          const taskTitleOf = round => {
+          const roundTitleOf = round => {
             const parts = []
+            if (typeof round.taskVersion === 'string' && round.taskVersion !== '') parts.push(round.taskVersion)
             if (typeof round.runId === 'string' && round.runId !== '') parts.push('run ' + round.runId)
             if (typeof round.sessionId === 'string' && round.sessionId !== '') parts.push(round.sessionId)
             return parts.join('\n')
           }
+
           const batchEnv = batchDoc && typeof batchDoc.env === 'object' && batchDoc.env !== null ? batchDoc.env : null
           const batchDir = batchDoc && typeof batchDoc.batchDir === 'string' ? batchDoc.batchDir : ''
-          const batchNotes = batchDoc && Array.isArray(batchDoc.notes) ? batchDoc.notes.filter(item => typeof item === 'string' && item !== '').slice(0, 5) : []
+          const allNotes = batchDoc && Array.isArray(batchDoc.notes) ? batchDoc.notes.filter(item => typeof item === 'string' && item.trim() !== '') : []
+          const warningNotes = allNotes.filter(isWarningNote)
+          const infoNotes = allNotes.filter(note => !isWarningNote(note))
           const detailTitle = displayName(batchDoc, rows, selectedBatchId)
 
           const nameRow = renaming
@@ -1242,9 +1483,10 @@ window.__ModuleLoader__.load({
               )
             : h(
                 'div',
-                { className: 'mst-row', key: 'name' },
+                { className: 'mst-detail-title-row', key: 'name' },
                 h('h3', { className: 'mst-detail-name' }, detailTitle),
-                h('button', { type: 'button', className: 'mst-btn mst-btn-small', onClick: beginRename }, t('detail.rename')),
+                detailStatus === '' ? null : h('span', { className: 'mst-badge', 'data-status': detailStatus }, statusText(detailStatus)),
+                batchDoc === null ? null : h('span', { className: 'mst-muted' }, timeText(pick(batchDoc, ['createdAt']))),
               )
 
           const detailEnvFields = [
@@ -1259,9 +1501,91 @@ window.__ModuleLoader__.load({
           const detailSections = []
 
           if (batchDoc !== null) {
+            // 1. KPI summary cards: primary benchmark takeaways at a glance.
+            const kpiElapsedValue =
+              canAggregateMedian && elapsedStats !== null && isNumber(elapsedStats.values.median)
+                ? t('unit.seconds', { value: secondsText(elapsedStats.values.median) })
+                : t('common.dash')
+            const kpiElapsedSub = environmentMismatch
+              ? t('kpi.mismatch')
+              : !canAggregateMedian
+                ? t('kpi.needMore')
+                : elapsedStats !== null && isNumber(elapsedStats.values.mad)
+                  ? t('kpi.madRange', {
+                      mad: secondsText(elapsedStats.values.mad) + 's',
+                      min: secondsText(elapsedStats.values.min) + 's',
+                      max: secondsText(elapsedStats.values.max) + 's',
+                    })
+                  : ''
+
+            const kpiSpeedValue =
+              canAggregateMedian && speedStats !== null && isNumber(speedStats.values.median)
+                ? t('unit.tps', { value: speedText(speedStats.values.median) })
+                : t('common.dash')
+            const kpiSpeedSub = environmentMismatch
+              ? t('kpi.mismatch')
+              : !canAggregateMedian
+                ? t('kpi.needMore')
+                : speedStats !== null && isNumber(speedStats.values.mad)
+                  ? t('kpi.madRange', {
+                      mad: speedText(speedStats.values.mad),
+                      min: speedText(speedStats.values.min),
+                      max: speedText(speedStats.values.max),
+                    })
+                  : t('kpi.speedSub')
+
+            const showStreamKpi = streamStats !== null && isNumber(streamStats.values.median)
+            const fourthKpiLabel = showStreamKpi ? t('kpi.stream') : t('kpi.request')
+            const fourthKpiValue = showStreamKpi
+              ? canAggregateMedian
+                ? t('unit.tps', { value: speedText(streamStats.values.median) })
+                : t('common.dash')
+              : canAggregateMedian && requestStats !== null && isNumber(requestStats.values.median)
+                ? t('unit.seconds', { value: secondsText(requestStats.values.median) })
+                : t('common.dash')
+            const fourthKpiSub = showStreamKpi ? t('kpi.streamSub') : t('kpi.requestSub')
+
+            const passedTone = totalCount === 0 ? '' : passedCount === totalCount ? 'ok' : passedCount === 0 ? 'bad' : ''
+
             detailSections.push(
               h(
                 'div',
+                { className: 'mst-kpi-grid', key: 'kpi' },
+                h(
+                  'div',
+                  { className: 'mst-kpi' },
+                  h('span', { className: 'mst-kpi-label' }, t('kpi.passed')),
+                  h('span', { className: 'mst-kpi-value', 'data-tone': passedTone }, countText(passedCount) + ' / ' + countText(totalCount)),
+                  h('span', { className: 'mst-kpi-sub' }, failedCount === 0 ? t('kpi.passedAll', { total: countText(totalCount) }) : t('kpi.passedSome', { total: countText(totalCount), failed: countText(failedCount) })),
+                ),
+                h(
+                  'div',
+                  { className: 'mst-kpi' },
+                  h('span', { className: 'mst-kpi-label' }, t('kpi.elapsed')),
+                  h('span', { className: 'mst-kpi-value' }, kpiElapsedValue),
+                  kpiElapsedSub === '' ? null : h('span', { className: 'mst-kpi-sub', title: kpiElapsedSub }, kpiElapsedSub),
+                ),
+                h(
+                  'div',
+                  { className: 'mst-kpi' },
+                  h('span', { className: 'mst-kpi-label' }, t('kpi.speed')),
+                  h('span', { className: 'mst-kpi-value' }, kpiSpeedValue),
+                  h('span', { className: 'mst-kpi-sub', title: kpiSpeedSub }, kpiSpeedSub),
+                ),
+                h(
+                  'div',
+                  { className: 'mst-kpi' },
+                  h('span', { className: 'mst-kpi-label' }, fourthKpiLabel),
+                  h('span', { className: 'mst-kpi-value' }, fourthKpiValue),
+                  h('span', { className: 'mst-kpi-sub', title: fourthKpiSub }, fourthKpiSub),
+                ),
+              ),
+            )
+
+            // 2. Environment snapshot card.
+            detailSections.push(
+              h(
+                'section',
                 { className: 'mst-card', key: 'env' },
                 h('h3', { className: 'mst-card-title' }, t('detail.env')),
                 h(
@@ -1276,12 +1600,74 @@ window.__ModuleLoader__.load({
                     ),
                   ),
                 ),
-                h('p', { className: 'mst-muted', style: { margin: 0 } }, t('detail.createdAt') + ' · ' + timeText(pick(batchDoc, ['createdAt']))),
               ),
             )
 
-            const medianIsMeaningless = statBlock === null || !isNumber(statBlock.median) || (isNumber(statBlock.n) && statBlock.n < 2)
+            // 3. Statistics summary card (strictly passed rounds; respects mismatch & n < 2).
+            detailSections.push(
+              h(
+                'section',
+                { className: 'mst-card', key: 'stats' },
+                h(
+                  'div',
+                  { className: 'mst-card-head' },
+                  h('h3', { className: 'mst-card-title' }, t('result.stats.title')),
+                  h('span', { className: 'mst-spacer' }),
+                  h('span', { className: 'mst-muted' }, t('result.stats.scope', { n: countText(passedCount) })),
+                ),
+                environmentMismatch
+                  ? h('div', { className: 'mst-banner mst-banner-warn' }, t('result.mismatch'))
+                  : statsRows.length === 0
+                    ? h('p', { className: 'mst-muted', style: { margin: 0 } }, detailActive ? t('result.pending') : t('result.noPassed'))
+                    : h(
+                        React.Fragment,
+                        null,
+                        passedCount < 2 ? h('p', { className: 'mst-muted', style: { margin: 0 } }, t('result.insufficient')) : null,
+                        h(
+                          'div',
+                          { className: 'mst-table-wrap' },
+                          h(
+                            'table',
+                            { className: 'mst-table' },
+                            h(
+                              'thead',
+                              null,
+                              h(
+                                'tr',
+                                null,
+                                h('th', null, t('result.stat.metric')),
+                                h('th', { className: 'mst-num' }, t('result.stat.n')),
+                                h('th', { className: 'mst-num' }, t('result.stat.median')),
+                                h('th', { className: 'mst-num' }, t('result.stat.min')),
+                                h('th', { className: 'mst-num' }, t('result.stat.max')),
+                                h('th', { className: 'mst-num' }, t('result.stat.mad')),
+                              ),
+                            ),
+                            h(
+                              'tbody',
+                              null,
+                              statsRows.map(row => {
+                                const canShowMedian = row.values.n >= 2
+                                const fmt = value => statNumber(value, row.digits)
+                                return h(
+                                  'tr',
+                                  { key: row.key },
+                                  h('td', null, t(row.key)),
+                                  h('td', { className: 'mst-num' }, countText(row.values.n)),
+                                  h('td', { className: 'mst-num-strong' }, canShowMedian ? fmt(row.values.median) : t('common.dash')),
+                                  h('td', { className: 'mst-num' }, fmt(row.values.min)),
+                                  h('td', { className: 'mst-num' }, fmt(row.values.max)),
+                                  h('td', { className: 'mst-num' }, canShowMedian ? fmt(row.values.mad) : t('common.dash')),
+                                )
+                              }),
+                            ),
+                          ),
+                        ),
+                      ),
+              ),
+            )
 
+            // 4. Per-round details table.
             const roundsTable = rounds.length === 0
               ? h('p', { className: 'mst-muted', style: { margin: 0 } }, detailActive ? t('result.pending') : t('result.empty'))
               : h(
@@ -1299,13 +1685,12 @@ window.__ModuleLoader__.load({
                         h('th', { className: 'mst-num' }, t('result.round')),
                         h('th', null, t('result.outcome')),
                         h('th', null, t('result.cache')),
-                        h('th', null, t('result.task')),
                         h('th', { className: 'mst-num' }, t('result.elapsed')),
                         h('th', { className: 'mst-num' }, t('result.speed')),
                         hasStreamData ? h('th', { className: 'mst-num', title: t('result.streamHint') }, t('result.stream')) : null,
                         hasTokenData ? h('th', { className: 'mst-num' }, t('result.tokens')) : null,
                         hasToolData ? h('th', { className: 'mst-num' }, t('result.tools')) : null,
-                        h('th', null, t('result.error')),
+                        hasErrorData ? h('th', null, t('result.error')) : null,
                       ),
                     ),
                     h(
@@ -1318,17 +1703,19 @@ window.__ModuleLoader__.load({
                         const errorMessage = typeof round.error === 'string' ? round.error : ''
                         return h(
                           'tr',
-                          { key: 'round-row-' + (isNumber(round.index) ? round.index : index) },
-                          h('td', { className: 'mst-num' }, isNumber(round.index) ? String(round.index) : String(index + 1)),
+                          {
+                            key: 'round-row-' + (isNumber(round.index) ? round.index : index),
+                            title: roundTitleOf(round),
+                          },
+                          h('td', { className: 'mst-num' }, '#' + (isNumber(round.index) ? String(round.index) : String(index + 1))),
                           h('td', null, h('span', { className: 'mst-badge', 'data-status': status2 }, statusText(status2))),
-                          h('td', null, cacheTextOf(round)),
-                          h('td', null, h('span', { className: 'mst-cell-run', title: taskTitleOf(round) }, taskTextOf(round))),
-                          h('td', { className: 'mst-num' }, t('unit.seconds', { value: secondsText(round.elapsedSeconds) })),
-                          h('td', { className: 'mst-num' }, t('unit.tps', { value: speedText(round.speedTps) })),
-                          hasStreamData ? h('td', { className: 'mst-num' }, t('unit.tps', { value: speedText(round.streamSpeedTps) })) : null,
+                          h('td', null, cacheBadgeOf(round)),
+                          h('td', { className: 'mst-num' }, isNumber(round.elapsedSeconds) ? t('unit.seconds', { value: secondsText(round.elapsedSeconds) }) : t('common.dash')),
+                          h('td', { className: 'mst-num-strong' }, isNumber(round.speedTps) ? t('unit.tps', { value: speedText(round.speedTps) }) : t('common.dash')),
+                          hasStreamData ? h('td', { className: 'mst-num' }, isNumber(round.streamSpeedTps) ? t('unit.tps', { value: speedText(round.streamSpeedTps) }) : t('common.dash')) : null,
                           hasTokenData ? h('td', { className: 'mst-num' }, countText(tokenValue)) : null,
                           hasToolData ? h('td', { className: 'mst-num' }, countText(toolValue)) : null,
-                          h('td', { className: 'mst-code', title: errorMessage }, errorMessage === '' ? t('common.dash') : errorMessage),
+                          hasErrorData ? h('td', { className: 'mst-code', title: errorMessage }, errorMessage === '' ? t('common.dash') : errorMessage) : null,
                         )
                       }),
                     ),
@@ -1337,114 +1724,62 @@ window.__ModuleLoader__.load({
 
             detailSections.push(
               h(
-                'div',
+                'section',
                 { className: 'mst-card', key: 'result' },
                 h(
                   'div',
                   { className: 'mst-card-head' },
                   h('h3', { className: 'mst-card-title' }, t('result.title')),
-                  h('span', { className: 'mst-badge', 'data-status': detailStatus }, statusText(detailStatus)),
-                  summary === null
-                    ? null
-                    : h('span', { className: 'mst-muted' }, t('result.passed', { passed: countText(summary.passed), total: countText(summary.total) })),
-                  summary === null
-                    ? null
-                    : h('span', { className: 'mst-muted' }, t('result.sample', { n: countText(statBlock === null ? undefined : statBlock.n) })),
+                  h('span', { className: 'mst-spacer' }),
+                  h('span', { className: 'mst-muted' }, t('result.passed', { passed: countText(passedCount), total: countText(totalCount) })),
                 ),
-                environmentMismatch ? h('p', { className: 'mst-warn', style: { margin: 0 } }, t('result.mismatch')) : null,
-                batchNotes.length === 0
-                  ? null
-                  : h(
-                      'ul',
-                      { className: 'mst-scroll', style: { margin: 0, paddingLeft: '18px' } },
-                      batchNotes.map((note, index) => h('li', { key: 'note-' + index, className: 'mst-warn' }, note)),
-                    ),
-                medianIsMeaningless && statBlock !== null ? h('p', { className: 'mst-muted', style: { margin: 0 } }, t('result.insufficient')) : null,
-                statBlock === null ? null : h('p', { className: 'mst-muted', style: { margin: 0 } }, t('result.statsHint')),
                 roundsTable,
-                failedRounds.length === 0
-                  ? null
-                  : h(
-                      'div',
-                      { style: { display: 'flex', flexDirection: 'column', gap: '4px' } },
-                      h('p', { className: 'mst-k', style: { margin: 0 } }, t('result.failed')),
-                      h(
-                        'ul',
-                        { className: 'mst-scroll', style: { margin: 0, paddingLeft: '18px' } },
-                        failedRounds.map((round, index) =>
-                          h(
-                            'li',
-                            { key: 'failed-' + index, className: 'mst-muted' },
-                            h('span', null, t('result.round') + ' ' + (isNumber(round.index) ? round.index : index + 1) + ' · '),
-                            h('span', null, statusText(round.status)),
-                            typeof round.error === 'string' && round.error !== '' ? h('span', { className: 'mst-code' }, ' · ' + round.error) : null,
-                          ),
-                        ),
-                      ),
-                    ),
               ),
             )
 
-            detailSections.push(
-              h(
-                'div',
-                { className: 'mst-card', key: 'stats' },
-                h('h3', { className: 'mst-card-title' }, t('result.stats.title')),
-                h(
-                  'div',
-                  { className: 'mst-table-wrap' },
-                  h(
-                    'table',
-                    { className: 'mst-table' },
-                    h(
-                      'thead',
-                      null,
-                      h(
-                        'tr',
-                        null,
-                        h('th', null, t('result.stat.metric')),
-                        h('th', { className: 'mst-num' }, t('result.stat.n')),
-                        h('th', { className: 'mst-num' }, t('result.stat.median')),
-                        h('th', { className: 'mst-num' }, t('result.stat.min')),
-                        h('th', { className: 'mst-num' }, t('result.stat.max')),
-                        h('th', { className: 'mst-num' }, t('result.stat.mad')),
-                      ),
-                    ),
-                    h(
-                      'tbody',
-                      null,
-                      buildStatsRows(rounds).map(row => {
-                        const cell = value =>
-                          h('td', { className: 'mst-num' }, row.digits === 0 ? countText(value) : statNumber(value, row.digits))
-                        return h(
-                          'tr',
-                          { key: row.key },
-                          h('td', null, t(row.key)),
-                          cell(row.values.n),
-                          cell(row.values.median),
-                          cell(row.values.min),
-                          cell(row.values.max),
-                          cell(row.values.mad),
-                        )
-                      }),
-                    ),
-                  ),
-                ),
-              ),
-            )
-
-            if (batchDir !== '') {
+            // 5. Warnings, routine notes & archive directory (secondary footer card).
+            if (warningNotes.length > 0 || infoNotes.length > 0 || batchDir !== '') {
               detailSections.push(
                 h(
-                  'div',
-                  { className: 'mst-card', key: 'dir' },
-                  h(
-                    'div',
-                    { className: 'mst-row' },
-                    h('span', { className: 'mst-k' }, t('detail.batchDir')),
-                    h('span', { className: 'mst-code', style: { flex: '1 1 220px', minWidth: 0 } }, batchDir),
-                    h('button', { type: 'button', className: 'mst-btn mst-btn-small', onClick: () => void copyText('dir', batchDir) }, copied === 'dir' ? t('detail.copied') : t('detail.copy')),
-                  ),
+                  'section',
+                  { className: 'mst-card', key: 'meta' },
+                  warningNotes.length > 0
+                    ? h(
+                        'div',
+                        { className: 'mst-banner mst-banner-warn' },
+                        h(
+                          'div',
+                          { style: { display: 'flex', flexDirection: 'column', gap: '4px', minWidth: 0 } },
+                          h('strong', { style: { fontWeight: 600 } }, t('detail.warnings')),
+                          h(
+                            'ul',
+                            { className: 'mst-note-list' },
+                            warningNotes.map((note, index) => h('li', { key: 'warn-' + index }, note)),
+                          ),
+                        ),
+                      )
+                    : null,
+                  infoNotes.length > 0
+                    ? h(
+                        'div',
+                        { style: { display: 'flex', flexDirection: 'column', gap: '4px' } },
+                        h('span', { className: 'mst-k' }, t('detail.notes')),
+                        h(
+                          'ul',
+                          { className: 'mst-note-list' },
+                          infoNotes.map((note, index) => h('li', { key: 'info-' + index, className: 'mst-muted' }, note)),
+                        ),
+                      )
+                    : null,
+                  batchDir !== ''
+                    ? h(
+                        'div',
+                        { className: warningNotes.length > 0 || infoNotes.length > 0 ? 'mst-dir-row' : 'mst-row' },
+                        h('span', { className: 'mst-k' }, t('detail.batchDir')),
+                        h('span', { className: 'mst-code', style: { flex: '1 1 220px', minWidth: 0 } }, batchDir),
+                        h('button', { type: 'button', className: 'mst-btn mst-btn-small', onClick: () => void copyText('dir', batchDir) }, copied === 'dir' ? t('detail.copied') : t('detail.copy')),
+                      )
+                    : null,
                 ),
               )
             }
@@ -1452,9 +1787,9 @@ window.__ModuleLoader__.load({
 
           const missingCard = batchMissing
             ? h(
-                'div',
+                'section',
                 { className: 'mst-card' },
-                h('p', { className: 'mst-warn', style: { margin: 0 } }, t('detail.missing')),
+                h('div', { className: 'mst-banner mst-banner-warn' }, t('detail.missing')),
                 h(
                   'div',
                   { className: 'mst-row' },
@@ -1469,43 +1804,49 @@ window.__ModuleLoader__.load({
             { className: 'mst-root', key: 'detail-view' },
             h(
               'div',
-              { className: 'mst-detail-head' },
-              h('button', { type: 'button', className: 'mst-btn-link', onClick: backToList }, '← ' + t('detail.back')),
-              h('span', { style: { flex: '1 1 auto' } }),
-              h('span', { className: 'mst-code' }, selectedBatchId),
-            ),
-            noticeRow,
-            errorRow,
-            nameRow,
-            h(
-              'div',
-              { className: 'mst-row' },
-              h('span', { className: 'mst-badge', 'data-status': detailStatus }, statusText(detailStatus)),
+              { className: 'mst-detail-top' },
+              h('button', { type: 'button', className: 'mst-btn mst-btn-small', onClick: backToList }, '← ' + t('detail.back')),
+              h('span', { className: 'mst-spacer' }),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'mst-id-btn',
+                  title: t('detail.id') + ' · ' + t('detail.copy'),
+                  onClick: () => void copyText('id', selectedBatchId),
+                },
+                copied === 'id' ? t('detail.copied') : selectedBatchId,
+              ),
+              batchDoc !== null && !renaming
+                ? h('button', { type: 'button', className: 'mst-btn mst-btn-small', onClick: beginRename }, t('detail.rename'))
+                : null,
               detailActive
                 ? h('button', { type: 'button', className: 'mst-btn mst-btn-danger mst-btn-small', onClick: cancelActive, disabled: cancelling }, cancelling ? t('progress.cancelling') : t('progress.cancel'))
-                : null,
-              batchError === '' ? null : h('span', { className: 'mst-error' }, batchError),
+                : batchDoc !== null
+                  ? h('button', { type: 'button', className: 'mst-btn mst-btn-danger mst-btn-small', onClick: () => setConfirmDelete(true), disabled: confirmDelete }, t('detail.delete'))
+                  : null,
             ),
-            missingCard,
-            batchDoc === null && batchMissing === false ? h('p', { className: 'mst-muted', style: { margin: 0 } }, t('loading')) : null,
-            detailSections,
-            batchDoc !== null && confirmDelete === false
-              ? h('div', { className: 'mst-row' }, h('button', { type: 'button', className: 'mst-btn mst-btn-danger mst-btn-small', onClick: () => setConfirmDelete(true) }, t('detail.delete')))
-              : null,
+            nameRow,
             confirmDelete
               ? h(
                   'div',
-                  { className: 'mst-confirm' },
-                  h('p', { className: 'mst-warn', style: { margin: 0 } }, t('detail.deleteConfirm')),
+                  { className: 'mst-confirm', role: 'alert' },
+                  h('span', { className: 'mst-error', style: { flex: '1 1 240px' } }, t('detail.deleteConfirm')),
                   h(
                     'div',
                     { className: 'mst-row' },
-                    h('button', { type: 'button', className: 'mst-btn mst-btn-danger mst-btn-small', onClick: () => void removeArchive(), disabled: deleting }, deleting ? t('loading') : t('detail.deleteYes')),
+                    h('button', { type: 'button', className: 'mst-btn mst-btn-danger-solid mst-btn-small', onClick: () => void removeArchive(), disabled: deleting }, deleting ? t('loading') : t('detail.deleteYes')),
                     h('button', { type: 'button', className: 'mst-btn mst-btn-small', onClick: () => setConfirmDelete(false), disabled: deleting }, t('detail.deleteNo')),
-                    deleteError === '' ? null : h('span', { className: 'mst-error' }, deleteError),
                   ),
+                  deleteError === '' ? null : h('span', { className: 'mst-error', style: { width: '100%' } }, deleteError),
                 )
               : null,
+            noticeRow,
+            errorRow,
+            batchError === '' || batchMissing ? null : h('div', { className: 'mst-banner mst-banner-error', role: 'alert' }, batchError),
+            missingCard,
+            batchDoc === null && batchMissing === false ? h('p', { className: 'mst-muted', style: { margin: 0 } }, t('loading')) : null,
+            detailSections,
           )
 
           const listView = h(

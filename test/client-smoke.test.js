@@ -385,9 +385,9 @@ test('list view shows the start form and archive names', async () => {
   assert.match(text, /工作区/)
   assert.match(text, /ws · D:\\ws/)
   assert.match(text, /火山 k3\.1 对比/)
-  assert.match(text, /2 轮 · 通过 2/)
+  assert.match(text, /2\/2/)
   assert.match(text, /96\.0 s/)
-  assert.match(text, /12\.30 tok\/s/)
+  assert.match(text, /12\.3 tok\/s/)
   assert.equal(harness.calls.startSession.length, 0)
 })
 
@@ -424,21 +424,28 @@ test('archive detail, rename and delete round-trip', async () => {
   const archive = findAll(harness.runtime.getTree(), node => node.type === 'tr' && node.props.className === 'mst-archive-row')[0]
   click(archive)
   await harness.runtime.settle()
+  const detailText = textOf(harness.runtime.getTree())
   assert.ok(harness.calls.fetch.some(call => call.url.indexOf('/api/speedtest/batch?id=' + BATCH_ID) === 0))
-  assert.match(textOf(harness.runtime.getTree()), /返回列表/)
-  assert.match(textOf(harness.runtime.getTree()), /批次环境/)
-  assert.match(textOf(harness.runtime.getTree()), /缓存/)
-  assert.match(textOf(harness.runtime.getTree()), /任务/)
-  assert.match(textOf(harness.runtime.getTree()), /统计/)
-  assert.match(textOf(harness.runtime.getTree()), /完成耗时（秒）/)
-  assert.match(textOf(harness.runtime.getTree()), /有效速度（tok\/s）/)
-  // 缓存列要真的显示命中与读取 token 数；任务列要显示固定任务版本而不是 runId。
-  assert.match(textOf(harness.runtime.getTree()), /命中 · 1,200/)
-  assert.match(textOf(harness.runtime.getTree()), /dev-short-v1/)
-  // 有效速度之外，还要有模型请求耗时与流式吐字速度（真实传输速度）。
-  assert.match(textOf(harness.runtime.getTree()), /模型请求耗时（秒）/)
-  assert.match(textOf(harness.runtime.getTree()), /流式吐字速度（tok\/s）/)
-  assert.equal(textOf(harness.runtime.getTree()).indexOf('20261111-120001-aaaaaa'), -1)
+  assert.match(detailText, /返回列表/)
+  assert.match(detailText, /批次环境/)
+  // 环境字段必须显示翻译后的中文标签，不能裸露 env.* key。
+  assert.match(detailText, /提供商/)
+  assert.match(detailText, /推理强度/)
+  assert.match(detailText, /Agent 预设/)
+  assert.match(detailText, /权限预设/)
+  assert.equal(detailText.indexOf('env.provider'), -1)
+  assert.equal(detailText.indexOf('env.model'), -1)
+  assert.match(detailText, /首请求缓存/)
+  assert.match(detailText, /统计汇总/)
+  assert.match(detailText, /完成耗时（秒）/)
+  assert.match(detailText, /有效输出速度（tok\/s）/)
+  // 缓存列要真的显示命中与读取 token 数；环境卡展示固定任务版本，不直接裸露 runId。
+  assert.match(detailText, /命中 · 1,200/)
+  assert.match(detailText, /dev-short-v1/)
+  // 有效速度之外，还要有模型请求耗时与流式吐字速度（对照口径）。
+  assert.match(detailText, /模型请求耗时（秒）/)
+  assert.match(detailText, /流式吐字速度（tok\/s，对照）/)
+  assert.equal(detailText.indexOf('20261111-120001-aaaaaa'), -1)
 
   // 2. rename
   const renameButton = findAll(harness.runtime.getTree(), buttonByText('重命名'))[0]
@@ -466,4 +473,48 @@ test('archive detail, rename and delete round-trip', async () => {
   assert.equal(textOf(harness.runtime.getTree()).indexOf('返回列表'), -1)
   assert.match(textOf(harness.runtime.getTree()), /已删除存档/)
   assert.equal(harness.calls.startSession.length, 0)
+})
+
+test('failed rounds are excluded from statistics and environment mismatch hides medians', async () => {
+  const mixedBatch = {
+    ok: true,
+    batch: Object.assign({}, BATCH.batch, {
+      rounds: [
+        { index: 1, status: 'passed', elapsedSeconds: 20, speedTps: 80, error: null },
+        { index: 2, status: 'passed', elapsedSeconds: 30, speedTps: 100, error: null },
+        { index: 3, status: 'failed', elapsedSeconds: 5, speedTps: 999, error: 'tests-not-passed' },
+      ],
+      summary: { total: 3, passed: 2, failed: 1, stats: { elapsedSeconds: { n: 2, median: 25, mad: 5 }, speedTps: { n: 2, median: 90, mad: 10 } } },
+    }),
+    live: null,
+  }
+  const harness = load({ status: STATUS, index: INDEX, batch: mixedBatch, workspaces: WORKSPACES, renameResult: { ok: true, name: 'x' }, deleteResult: { ok: true } })
+  const section = harness.registrations[0].component
+  harness.runtime.render(section, { subject: SUBJECT })
+  await harness.runtime.settle()
+  click(findAll(harness.runtime.getTree(), node => node.type === 'tr' && node.props.className === 'mst-archive-row')[0])
+  await harness.runtime.settle()
+  const text = textOf(harness.runtime.getTree())
+  // 失败轮次的 5s / 999 tok/s 不得混入统计汇总表（中位数仍为 25.0s / 90.0 tok/s，n=2）。
+  assert.match(text, /仅统计通过轮次（n=2）/)
+  assert.match(text, /25\.0 s/)
+  assert.match(text, /90\.0 tok\/s/)
+  assert.match(text, /tests-not-passed/)
+
+  // 环境不一致时，必须拒绝合并中位数，不渲染统计表行。
+  const mismatchBatch = {
+    ok: true,
+    batch: Object.assign({}, BATCH.batch, {
+      summary: Object.assign({}, BATCH.batch.summary, { environmentMismatch: true }),
+    }),
+    live: null,
+  }
+  const harness2 = load({ status: STATUS, index: INDEX, batch: mismatchBatch, workspaces: WORKSPACES, renameResult: { ok: true, name: 'x' }, deleteResult: { ok: true } })
+  harness2.runtime.render(harness2.registrations[0].component, { subject: SUBJECT })
+  await harness2.runtime.settle()
+  click(findAll(harness2.runtime.getTree(), node => node.type === 'tr' && node.props.className === 'mst-archive-row')[0])
+  await harness2.runtime.settle()
+  const mismatchText = textOf(harness2.runtime.getTree())
+  assert.match(mismatchText, /各轮环境不一致/)
+  assert.equal(mismatchText.indexOf('完成耗时（秒）'), -1)
 })

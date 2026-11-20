@@ -119,15 +119,35 @@ const handle = await ctx.agents.create({
 })
 // 创建后尝试继承权限预设；custom/auto/服务缺失时记录警告，不阻断
 await ctx.get('permissionPresets')?.set(handle.agent.session, permissionPreset)
-handle.agent.followup({ content: [{ type: 'text', text: FIXED_PROMPT }], source: { kind: 'model-speedtest' } })
+handle.agent.followup({ content: [{ type: 'text', text: composePrompt(skill) }], source: { kind: 'model-speedtest' } })
 await waitIdle(handle.agent, runTimeoutMinutes * 60_000) // 超时 cancel({kind:'user'})
 ```
 
-`FIXED_PROMPT` 必须逐字一致：
+`FIXED_PROMPT` 必须逐字一致，且固定作为提示词**第一段**：
 
 ```text
 用测速功能帮我测速。这是自动批量测速的一轮：只执行本轮，不要向我提问，不要创建子代理，按 model-speed-load skill 的流程一次跑完。
 ```
+
+其后由 `composePrompt` 逐字附加 skill 正文（`<skill_content>` + 基准目录 + `<skill_instructions>`）：
+
+```text
+<skill_content name="model-speed-load">
+<skill_resources>
+Base directory for this skill: <skill 目录的绝对路径>
+Resolve relative paths mentioned by this skill against the base directory before using them. Load referenced resources only as needed.
+</skill_resources>
+<skill_instructions>
+<SKILL.md 全文>
+</skill_instructions>
+</skill_content>
+```
+
+**为什么要自带正文**：该 skill 的 frontmatter 带 `disable-model-invocation: true`（仅手动调用），
+不再进入模型侧技能目录，模型无法自行加载。提示词必须自给自足。
+读取顺序：`batch.skill.dir` → `$DSH_HOME/skills/model-speed-load` → 插件自带 `skill/model-speed-load/`；
+三处都读不到时，该轮以 `SKILL-MISSING` 失败，不静默降级成「没有流程的空跑」。
+基准目录行不可省——正文里的 `scripts/measure.mjs`、`assets/dev-short-v1` 都是相对路径。
 
 ### 3.4 收轮
 

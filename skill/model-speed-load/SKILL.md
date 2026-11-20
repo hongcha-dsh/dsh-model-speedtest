@@ -1,6 +1,7 @@
 ---
 name: model-speed-load
 description: "模型测速（短开发任务版）。当用户说“用测速功能帮我测速”，或要比较当前对话所用模型、渠道/Key、preset 与插件组合下的真实开发速度（真实完成时间、有效输出速度、工具耗时、缓存命中）时使用；固定 1–3 分钟 JavaScript 小任务 + Node 内置测试验收，单次只测当前环境并产出单份报告；需要 A/B 时由用户手动打开独立 DSH 任务逐轮测量，再显式选择 run 做只读汇总，不自动切换配置、不自动取最近 N 次、不做全局排名。"
+disable-model-invocation: true
 ---
 
 # 模型测速 · 短开发任务版（dev-short-v1）

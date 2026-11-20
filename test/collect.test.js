@@ -6,6 +6,7 @@ import {
   roundPatchFromResult,
   roundStatusOf,
   selectLatestResult,
+  sessionLogMismatchWarning,
   validateResultDocument,
 } from '../lib/collect.js'
 
@@ -132,4 +133,16 @@ test('filterFreshCandidates 只保留本轮新出现的结果', async () => {
   assert.deepEqual(fresh.map((item) => item.relative), ['run-new/result.json'])
   assert.equal(filterFreshCandidates(candidates, undefined).length, 2)
   assert.equal(filterFreshCandidates(candidates, ['D:\\ws\\.speedtest\\run-new\\result.json']).length, 1)
+})
+
+test('sessionLogMismatchWarning 检测日志归属串会话', () => {
+  assert.equal(
+    sessionLogMismatchWarning('D:\\DSH-Home\\sessions\\ws1\\session-abc\\session.v4.jsonl.zstd', 'session-abc', 1),
+    null,
+  )
+  const warn = sessionLogMismatchWarning('D:\\DSH-Home\\sessions\\ws1\\session-other\\session.v4.jsonl.zstd', 'session-abc', 2)
+  assert.match(warn, /第 2 轮会话日志归属异常/)
+  assert.match(warn, /session-abc/)
+  assert.match(warn, /session-other/)
+  assert.equal(sessionLogMismatchWarning(null, 'session-abc', 1), null)
 })
